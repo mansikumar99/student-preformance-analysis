@@ -5,6 +5,8 @@
 
 An exploratory and inferential analysis of a 4,000-student dataset, examining how study habits, tutoring, attendance, and parental education relate to exam performance — with a dedicated demonstration of the Central Limit Theorem via repeated sampling, and a comparison of three probability sampling methods.
 
+**[View the full rendered HTML report](https://htmlpreview.github.io/?https://github.com/mansikumar99/student-preformance-analysis/blob/main/CS544FinalProject_Kumar.html)** — GitHub only displays `.html` files as raw source code, so use this link to see the knitted report as an actual webpage.
+
 ## Project structure
 
 ```
@@ -14,6 +16,10 @@ student-performance-analysis-attachments/
 ├── SAP-4000 (1).csv               # Source dataset (4,000 student records)
 └── README.md
 ```
+
+- [`CS544FinalProject_Kumar.Rmd`](CS544FinalProject_Kumar.Rmd) — the R Markdown source
+- [`CS544FinalProject_Kumar.html`](CS544FinalProject_Kumar.html) — the knitted report (raw source on GitHub; [view rendered](https://htmlpreview.github.io/?https://github.com/mansikumar99/student-preformance-analysis/blob/main/CS544FinalProject_Kumar.html))
+- [`SAP-4000 (1).csv`](<SAP-4000 (1).csv>) — the source dataset
 
 ## Dataset
 
@@ -31,7 +37,7 @@ student-performance-analysis-attachments/
 
 ## Analysis
 
-The report (`CS544FinalProject_Kumar.Rmd`, rendered in `CS544FinalProject_Kumar.html`) covers:
+The report ([`CS544FinalProject_Kumar.Rmd`](CS544FinalProject_Kumar.Rmd), rendered in [`CS544FinalProject_Kumar.html`](CS544FinalProject_Kumar.html)) covers:
 
 1. **Categorical variable analysis** — distribution of students by parent education level.
 2. **Numerical variable analysis** — distribution of weekly study hours.
@@ -52,4 +58,4 @@ The report (`CS544FinalProject_Kumar.Rmd`, rendered in `CS544FinalProject_Kumar.
 
 ## How to reproduce
 
-Open `CS544FinalProject_Kumar.Rmd` in RStudio with `SAP-4000 (1).csv` in the same directory, and knit to HTML. Requires the R packages: `plotly`, `sampling`, `tidyverse`, `knitr`.
+Open [`CS544FinalProject_Kumar.Rmd`](CS544FinalProject_Kumar.Rmd) in RStudio with [`SAP-4000 (1).csv`](<SAP-4000 (1).csv>) in the same directory, and knit to HTML. Requires the R packages: `plotly`, `sampling`, `tidyverse`, `knitr`.
