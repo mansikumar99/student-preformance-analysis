@@ -8,7 +8,7 @@ An exploratory and inferential analysis of a 4,000-student dataset, examining ho
 ## Project structure
 
 ```
-nicoleivant-attachments/
+student-performance-analysis-attachments/
 ├── CS544FinalProject_Kumar.Rmd    # R Markdown source: all analysis, code, and narrative
 ├── CS544FinalProject_Kumar.html   # Rendered/knitted report (open in a browser)
 ├── SAP-4000 (1).csv               # Source dataset (4,000 student records)
