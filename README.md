@@ -5,7 +5,7 @@
 
 An exploratory and inferential analysis of a 4,000-student dataset, examining how study habits, tutoring, attendance, and parental education relate to exam performance — with a dedicated demonstration of the Central Limit Theorem via repeated sampling, and a comparison of three probability sampling methods.
 
-**[View the full rendered HTML report](https://htmlpreview.github.io/?https://github.com/mansikumar99/student-preformance-analysis/blob/main/CS544FinalProject_Kumar.html)** — GitHub only displays `.html` files as raw source code, so use this link to see the knitted report as an actual webpage.
+**[View the full rendered HTML report](https://mansikumar99.github.io/student-preformance-analysis/CS544FinalProject_Kumar.html)** (hosted via GitHub Pages) — GitHub only displays `.html` files as raw source code, so use this link to see the knitted report as an actual webpage with all interactive plots working.
 
 ## Project structure
 
@@ -18,7 +18,7 @@ student-performance-analysis-attachments/
 ```
 
 - [`CS544FinalProject_Kumar.Rmd`](CS544FinalProject_Kumar.Rmd) — the R Markdown source
-- [`CS544FinalProject_Kumar.html`](CS544FinalProject_Kumar.html) — the knitted report (raw source on GitHub; [view rendered](https://htmlpreview.github.io/?https://github.com/mansikumar99/student-preformance-analysis/blob/main/CS544FinalProject_Kumar.html))
+- [`CS544FinalProject_Kumar.html`](CS544FinalProject_Kumar.html) — the knitted report (raw source on GitHub; [view rendered](https://mansikumar99.github.io/student-preformance-analysis/CS544FinalProject_Kumar.html))
 - [`SAP-4000 (1).csv`](<SAP-4000 (1).csv>) — the source dataset
 
 ## Dataset
