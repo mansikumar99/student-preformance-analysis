@@ -1,7 +1,7 @@
 # Student Performance Analysis: The Impact of Variables and Demographics
 
 **Author:** Mansi Kumar
-**Course:** CS 544 — Foundations of Analytics with R
+**Course:** CS 544 — Foundations of Analytics and Data Visualization with R
 
 An exploratory and inferential analysis of a 4,000-student dataset, examining how study habits, tutoring, attendance, and parental education relate to exam performance — with a dedicated demonstration of the Central Limit Theorem via repeated sampling, and a comparison of three probability sampling methods.
 
