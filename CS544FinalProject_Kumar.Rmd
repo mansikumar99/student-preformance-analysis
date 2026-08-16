@@ -1,0 +1,499 @@
+---
+title: "Student Performance Analysis: The Impact of Variables and Demographics"
+author: "Mansi Kumar"
+output:
+  html_document:
+    fig_width: 8
+    code_folding: hide
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=4,
+                      echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+# Preparing the Data  
+  The dataset 'SAP-4000 (1).csv' was downloaded and saved to the Desktop.
+The file was then moved into the same folder as the R Markdown file within the Documents folder to make importing easier. This allowed it to be imported using a relative path and dataset was imported into R using 'read.csv()'. No additional preprocessing was needed after import.
+
+```{r echo=TRUE}
+student_performance_data <- read.csv("SAP-4000 (1).csv")
+```
+
+
+# Student Performance Analysis
+
+  The following report looks at the affect of different variables on student exam scores and performance. Variables such as hours studied per week, tutoring, attendance,  parent education level, and gender are analyzed to determine whether they hinder or better performance. Distributions are analyzed in order to affirm Central Limit Theorem and various sampling methods and data wrangling techniques are used on the data for analysis.
+
+## Analysis of Categorical Variable: Parent Education Level 
+
+  This section analyzes a categorical student performance determinant which is the education level of each student's parents/guardian. Higher levels of parent education tend to be positively correlated with student academic performance. The bar chart exhibits how many students fall under each category (education level). The chart exhibits that most student's parents have a secondary education level followed by a tertiary education level.
+
+```{r echo=TRUE}
+library(plotly)
+
+education_counts <- table(student_performance_data$Parent.Education)
+
+p <- plot_ly(
+  x = names(education_counts),
+  y = education_counts,
+  type = "bar"
+)
+
+layout(p,
+  title = "Parent Education Level of Students",
+  xaxis = list(title = "Parent Education Level"),
+  yaxis = list(title = "Number of Students")
+)
+        
+```        
+        
+
+## Analysis of Numerical Variable: Hours Studied Per Week 
+
+  This section formulates a histogram to examine the numerical number of hours students study each week. The histogram exhibits the distribution of study time across all students to comprehend whether they study little to many hours and the effect of this on their exam score. The histogram exhibits that students study 8 to 12 hours a week the most. The histogram is a little bit skewed to the left indicating that students study more hours per week rather than less.
+
+```{r echo=TRUE}
+p <- plot_ly(
+  data = student_performance_data,
+  x = ~HoursStudied.Week,
+  type = "histogram",
+  marker = list(color = "pink",
+                line = list(color = "black", width = 1)),
+  xbins = list(
+    start = 0,
+    end = 20,
+    size = 2  ))
+
+layout(p,
+       title = "Histogram of Hours Studied per Week",
+       xaxis = list(
+         title = "Hours Studied per Week",
+         tickvals = seq(0, 20, 2)
+       ),
+       yaxis = list(title = "Number of Students"))
+```
+## Multivariable Analysis: Hours Studied and Tutoring Effect on Exam Scores 
+   This section elicits a scatter plot to exhibit the correlation between the number of hours studied per week and exam score. The color of each point within the plot represents whether or not the student received tutoring and the plot aids in comprehending whether study time or tutoring is correlated to better exam performance. The scatter plot shows a positive correlation between the number of hours studied and exam score meaning that as the number of hours studied increases, the exam score increases. The plot also shows that students who received tutoring performed better on exams than those who did not receive tutoring even with the same amount of hours of studying.  
+
+
+```{r echo=TRUE}
+p <- plot_ly(
+  data = student_performance_data,
+  x = ~HoursStudied.Week,
+  y = ~Exam_Score,
+  color = ~Tutoring,
+  type = "scatter",
+  mode = "markers"
+)
+
+layout(p,
+  title = "Hours Studied vs Exam Score by Tutoring Status",
+  xaxis = list(title = "Hours Studied per Week"),
+  yaxis = list(title = "Exam Score")
+)
+```
+
+## Numerical Variable Distribution of Data: Exam Scores 
+
+  This section examines the distribution of numerical exam scores for all students. The histogram exhibits that the students scored between a 70-80 on the exam the most. It is evident that most students scored between 60 to 90 which is shown by the height of the bars. The histogram is skewed to the left indicating that more students scored higher on the exam and fewer scored lower. We see that few students scored lower and those scores can decrease the mean to be less than the median. 
+
+
+```{r echo=TRUE}
+p <- plot_ly(
+  data = student_performance_data,
+  x = ~Exam_Score,
+  type = "histogram",
+  marker = list(color = "lightblue", line = list(color = "black", width = 1)),
+  xbins = list(
+    start = 0,
+    end = 100,
+    size = 10
+  )
+)
+
+layout(p,
+  title = "Distribution of Exam Scores",
+  xaxis = list(
+    title = "Exam Score",
+    tickvals = seq(0, 100, 10)
+  ),
+  yaxis = list(title = "Number of Students")
+)
+```
+
+## Exam Score Distribution: Mean and Standard Deviation 
+   The mean of the distribution is 71.11 and the standard deviation is 16.75. This population mean and standard deviation is significant in order to compare the original exam score data with the sample mean distributions of various sample sizes which will be demonstrated next in order to reflect Central Limit Theorem.
+
+```{r echo=TRUE, results='asis'}
+mean_score <- round(mean(student_performance_data$Exam_Score), 2)
+sd_score <- round(sd(student_performance_data$Exam_Score), 2)
+
+cat("Mean Exam Score:", mean_score, "\n")
+cat("Standard Deviation:", sd_score)
+```
+
+ 
+## Central Limit Theorem: Examining Sample Mean Distributions Against Population Data
+   This section compares the original exam score data and sample mean distributions of n= 10, 20, 40, 60. We see that the original data has a mean of 71.11 and a standard deviation of 16.75. When the distributions of the sample means were formed it is evident that as the value of the sample size increased, the histogram narrowed and the height of the bars increased. As the sample size increased the mean decreased closer to the original population mean and the standard deviation decreased to 2.14. These findings reflect the Central Limit Theorem since the distribution of the sample means became more smooth, narrower, and bell shaped as the sample size increased. The mean of the largest sample size was closest to the true population mean and the standard deviation got smaller as the sample size increased reflecting the theorem. 
+
+```{r echo=TRUE, , results='asis'}
+set.seed(6670)
+
+samples <- 5000
+size <- 10
+x <- student_performance_data$Exam_Score
+xbar <- numeric(samples)
+
+for (i in 1:samples) {
+  xbar[i] <- mean(sample(x, size = size, replace = FALSE))
+}
+
+mean_xbar <- round(mean(xbar), 2)
+sd_xbar <- round(sd(xbar), 2)
+
+cat("Sample Size =", size, "| Mean =", mean_xbar, "| SD =", sd_xbar, "\n")
+
+plot_ly(
+  x = ~xbar,
+  type = "histogram",
+  marker = list(color = "lightblue", line = list(color = "black", width = 1)),
+  xbins = list(start = 40, end = 100, size = 1)
+) |>
+  layout(
+    title = paste("Sampling Distribution of Sample Mean (n =", size, ")"),
+    xaxis = list(title = "Sample Mean of Exam Score", range = c(40, 100)),
+    yaxis = list(title = "Frequency")
+  )
+```   
+```{r echo=TRUE, , results='asis'}
+set.seed(6670)
+
+samples <- 5000
+size <- 20
+x <- student_performance_data$Exam_Score
+xbar <- numeric(samples)
+
+for (i in 1:samples) {
+  xbar[i] <- mean(sample(x, size = size, replace = FALSE))
+}
+
+mean_xbar <- round(mean(xbar), 2)
+sd_xbar <- round(sd(xbar), 2)
+
+cat("Sample Size =", size, "| Mean =", mean_xbar, "| SD =", sd_xbar, "\n")
+
+plot_ly(
+  x = ~xbar,
+  type = "histogram",
+  marker = list(color = "lightblue", line = list(color = "black", width = 1)),
+  xbins = list(start = 40, end = 100, size = 1)
+) |>
+  layout(
+    title = paste("Sampling Distribution of Sample Mean (n =", size, ")"),
+    xaxis = list(title = "Sample Mean of Exam Score", range = c(40, 100)),
+    yaxis = list(title = "Frequency")
+  )
+``` 
+
+
+```{r echo=TRUE, , results='asis'}
+set.seed(6670)
+
+samples <- 5000
+size <- 40
+x <- student_performance_data$Exam_Score
+xbar <- numeric(samples)
+
+for (i in 1:samples) {
+  xbar[i] <- mean(sample(x, size = size, replace = FALSE))
+}
+
+mean_xbar <- round(mean(xbar), 2)
+sd_xbar <- round(sd(xbar), 2)
+
+cat("Sample Size =", size, "| Mean =", mean_xbar, "| SD =", sd_xbar, "\n")
+
+plot_ly(
+  x = ~xbar,
+  type = "histogram",
+  marker = list(color = "lightblue", line = list(color = "black", width = 1)),
+  xbins = list(start = 40, end = 100, size = 1)
+) |>
+  layout(
+    title = paste("Sampling Distribution of Sample Mean (n =", size, ")"),
+    xaxis = list(title = "Sample Mean of Exam Score", range = c(40, 100)),
+    yaxis = list(title = "Frequency")
+  )
+``` 
+
+
+```{r echo=TRUE, , results='asis'}
+set.seed(6670)
+
+samples <- 5000
+size <- 60
+x <- student_performance_data$Exam_Score
+xbar <- numeric(samples)
+
+for (i in 1:samples) {
+  xbar[i] <- mean(sample(x, size = size, replace = FALSE))
+}
+
+mean_xbar <- round(mean(xbar), 2)
+sd_xbar <- round(sd(xbar), 2)
+
+cat("Sample Size =", size, "| Mean =", mean_xbar, "| SD =", sd_xbar, "\n")
+
+plot_ly(
+  x = ~xbar,
+  type = "histogram",
+  marker = list(color = "lightblue", line = list(color = "black", width = 1)),
+  xbins = list(start = 40, end = 100, size = 1)
+) |>
+  layout(
+    title = paste("Sampling Distribution of Sample Mean (n =", size, ")"),
+    xaxis = list(title = "Sample Mean of Exam Score", range = c(40, 100)),
+    yaxis = list(title = "Frequency")
+  )
+``` 
+
+## Sampling Methods: 
+   
+   This section exhibits how various sampling methods can be used on the student performance data. A subset of the data is formulated with only the top three parent education levels based on the number of students. A sample is then drawn using simple random sampling with replacement. The inclusion probabilities using the Exam_Score variable are calculated and these values are used in order to show the sample drawn using systematic sampling with unequal probabilities. The data is then ordered using parent education level and a stratified sample is then drawn using proportional sizes based on the parent education level variable. The means of these samples are compared to the subset mean.When examining the means we see that the mean of the subset top3data$Exam_Score is 71.44. The mean earnings of the stratified sample is closest to the mean of the subset meaning that stratified sampling helped sampling error reduction and proportional representation. The simple random sample mean is a bit lower which could be an effect of sampling with replacement. The systematic sample exhibited the highest mean. This can be due to the fact that the inclusion probabilities was based on the Exam_Score variable so higher scorers could have been more included within the sample. If these samples were utilized instead of the full dataset, stratified sampling would yield the most reliable results. Depending on the methods and sample size the results may vary, but the full dataset is evidently more accurate.
+   
+  
+
+### Top 3 Parent Education Levels
+```{r echo=TRUE, , results='asis'}
+
+top3_parentedu <- names(sort(table(student_performance_data$Parent.Education), decreasing = TRUE)[1:3])
+top3data <- subset(student_performance_data, Parent.Education %in% top3_parentedu)
+cat("The top three parent education levels based on the number of students are:\n")
+
+parentedu_table <- as.data.frame(table(top3data$Parent.Education))
+colnames(parentedu_table) <- c("Parent Education Level", "Students")
+
+knitr::kable(parentedu_table, caption = "Top 3 Parent Education Levels by Student Count")
+```
+
+
+
+### Simple Random Sampling 
+```{r echo=TRUE}
+library(sampling)
+
+# Simple Random Sampling With Replacement (SRSWR)
+set.seed(6670)
+
+n <- 100
+s <- srswr(n, nrow(top3data))
+
+rows <- (1:nrow(top3data))[s != 0]
+rows <- rep(rows, s[s != 0])
+
+sample_a <- top3data[rows, ]
+freq_a <- table(sample_a$Parent.Education)
+percent_a <- prop.table(freq_a) * 100 
+
+sample_summary <- data.frame(
+  `Parent Education Level` = names(freq_a),
+  Frequency = as.vector(freq_a),
+  Percentage = round(as.vector(percent_a), 2)
+)
+
+knitr::kable(sample_summary, caption = "Sample A: Distribution of Parent Education Levels (SRSWR)")
+```
+
+### Systematic Sampling
+```{r echo=TRUE}
+# Systematic Sampling with unequal probabilities (based on Exam_Score)
+set.seed(6670)
+
+pik <- inclusionprobabilities(top3data$Exam_Score, 100)
+
+s <- UPsystematic(pik)
+sample_b <- top3data[s != 0, ]
+freq_b <- table(sample_b$Parent.Education) 
+percent_b <- prop.table(freq_b) * 100 
+
+sample_b_summary <- data.frame(
+  `Parent Education Level` = names(freq_b),
+  Frequency = as.vector(freq_b),
+  Percentage = round(as.vector(percent_b), 2)
+)
+
+
+knitr::kable(sample_b_summary, caption = "Sample B: Distribution of Parent Education Levels (Systematic Sampling)")
+```
+
+
+
+
+### Stratified Sampling
+```{r echo=TRUE}
+# Stratified Sampling (proportional to strata size)
+set.seed(6670)
+
+top3data_ordered <- top3data[order(top3data$Parent.Education), ]
+freq <- table(top3data_ordered$Parent.Education)
+ordered_summary <- data.frame(
+  `Parent Education Level` = names(freq),
+  Frequency = as.vector(freq)
+)
+
+knitr::kable(ordered_summary, caption = "Data Ordering of Education Level")
+
+sizes <- round(100 * freq / sum(freq))  # sum (sizes) may not be exactly 100 due to rounding
+
+strata_sample <- sampling::strata(
+  data = top3data_ordered,
+  stratanames = "Parent.Education",
+  size = sizes,
+  method = "srswor"
+)
+
+sample_c <- sampling::getdata(top3data_ordered, strata_sample) 
+freq_c <- table(sample_c$Parent.Education) 
+percent_c <- prop.table(freq_c) * 100 
+
+sample_c_summary <- data.frame(
+  `Parent Education Level` = names(freq_c),
+  Frequency = as.vector(freq_c),
+  Percentage = round(as.vector(percent_c), 2)
+)
+
+knitr::kable(sample_c_summary, caption = "Sample C: Distribution of Parent Education Levels (Stratified Sampling)")
+```
+
+### Mean Comparison
+```{r echo=TRUE , results='asis'}
+# Compare means
+mean_full <- mean(top3data$Exam_Score)
+mean_a <- mean(sample_a$Exam_Score)
+mean_b <- mean(sample_b$Exam_Score)
+mean_c <- mean(sample_c$Exam_Score)
+
+cat("Mean Exam Score for subset data:", mean_full, "\n")
+cat("Mean Exam Score in Sample A (SRSWR):", mean_a, "\n")
+cat("Mean Exam Score in Sample B (Systematic unequal probs):", mean_b, "\n")
+cat("Mean Exam Score in Sample C (Stratified):", mean_c, "\n")
+
+```
+   
+       
+   
+   
+## Data Wrangling 
+
+   This section utilizes data wrangling techniques on the student performance data.
+
+### Average Exam Score by Gender 
+  
+   The following analysis exhibits the average exam score by gender using data wrangling techniques. The analysis utilizing grouping by the categorical attribute of gender, aggregation of each gender count, and the calculation of the average exam score for each gender. The bar graph heights depict that both genders on average performed very similarly as the average female exam score was 71.94 and the average male exam score was 70.24
+      
+       
+
+```{r echo=TRUE}
+library(tidyverse)
+
+avg_score_by_gender <- student_performance_data |>
+  group_by(Gender) |>
+  summarise(
+    Count = n(),
+    Average_Score = round(mean(Exam_Score, na.rm = TRUE),2)
+  )
+
+knitr::kable(avg_score_by_gender, caption = "Average Exam Score by Gender")
+```
+
+```{r echo=TRUE}
+plot_ly(
+  data = avg_score_by_gender,
+  x = ~Gender,
+  y = ~Average_Score,
+  type = "bar",
+  marker = list(color = "skyblue", line = list(color = "black", width = 1))
+) |>
+  layout(
+    title = "Average Exam Score by Gender",
+    xaxis = list(title = "Gender"),
+    yaxis = list(
+      title = "Average Exam Score",
+      range = c(0, 100),
+      tick0 = 0,
+      dtick = 10
+    )
+  )
+```
+
+
+### Attendance Based Average Exam Scores 
+      
+      
+ The analysis below examines the effect of attendance rates on exam performance. Filtered students with below 60% attendance on average performed less on exams compared to students with greater than 90% attendance. The average exam score for students with lower than 60% attendance was a 65.31 while the average exam score for students with higher than 90% attendance was a 76.54
+      
+```{r echo=TRUE}
+low_attendance_average <- student_performance_data |>
+  filter(Attendance... < 60) |>
+  summarize(
+    Count = n(),
+    Low_Avg_Score = round(mean(Exam_Score, na.rm = TRUE),2)
+  ) 
+knitr::kable(low_attendance_average, caption = "Average Exam Score for Students with <60% Attendance")
+
+
+high_attendance_average <- student_performance_data |>
+  filter(Attendance... > 90) |>
+  summarize(
+    Count = n(),
+    High_Avg_Score = round(mean(Exam_Score, na.rm = TRUE),2)
+  ) 
+
+knitr::kable(high_attendance_average, caption = "Average Exam Score for Students with >90% Attendance")
+```
+
+
+
+```{r echo=TRUE}
+attendance_summary <- tibble::tibble(
+  Attendance_Group = c("Low Attendance (<60%)", "High Attendance (>90%)"),
+  Avg_Exam_Score = c(low_attendance_average$Low_Avg_Score,
+                     high_attendance_average$High_Avg_Score)
+)
+
+
+plot_ly(
+  data = attendance_summary,
+  x = ~Attendance_Group,
+  y = ~Avg_Exam_Score,
+  type = 'bar',
+  marker = list(color = c('tomato', 'steelblue'))
+) |> layout(
+  title = "Average Exam Scores by Attendance Group",
+  yaxis = list(title = "Average Exam Score"),
+  xaxis = list(title = "Attendance Group")
+)
+```
+
+# Conclusion
+     
+  The analysis of the student performance dataset has made it evident that factors such as hours studied per week, tutoring, attendance, and parent education levels influence examination scores. The multivariable analysis yielded a positive correlation between tutoring and exam scores as well as between hours studied and exam score. When conducting data wrangling techniques we were able to see that attendance rates influenced the exam score. Lower attendance rate exhibited a lower average exam score. The distribution of the Exam_Score variable enabled us to see the population mean and standard deviation to be compared against sample means of various sample sizes. The conclusion formulated is that larger sample sizes cause narrower and taller histograms, decreased standard deviations , means closest to the population mean, and what resembles a bell shaped curve which supports Central Limit Theorem. When conducting sampling methods the stratified sample mean exam score was closest to the subset mean.This project demonstrates how careful analysis and appropriate methods can lead to more accurate and insightful understanding of a dataset.
+
+      
+ 
+
+
+
+
+
+
+
+
+
+
